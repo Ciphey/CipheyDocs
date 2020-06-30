@@ -5,6 +5,6 @@ sphinx:
 formats: all
 python:
   version: 3.7
-  install:
-    - requirements: docs/requirements.txt
-    - path: .
+  # install:
+  #   - requirements: docs/requirements.txt
+  #   - path: .
