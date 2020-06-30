@@ -1,0 +1,2 @@
+# CipheyDocs
+Documentation for Ciphey
