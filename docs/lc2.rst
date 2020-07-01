@@ -217,7 +217,7 @@ higher accuracy and again - likely incredibly low latency.
 I will create a table of my results:
 
 Table of max sentence length == 50
-==================================
+-----------------------------------------
 
 +----------+----------+----------+----------+--------+----------+
 | Name     | Speed    | Accuracy | String   | Epochs | Max      |
@@ -242,7 +242,8 @@ Table of max sentence length == 50
 +----------+----------+----------+----------+--------+----------+
 
 Table of max sentence length == 5
-=================================
+
+-----------------------------------------
 
 +----------+----------+----------+----------+--------+----------+
 | Name     | Speed    | Accuracy | String   | Epochs | Max      |
@@ -267,7 +268,7 @@ Table of max sentence length == 5
 +----------+----------+----------+----------+--------+----------+
 
 Table of max sentence length == 1
-=================================
+-----------------------------------------
 
 +--------------+-----------------+---+---+--------------+---+---------+
 | Name         | Speed           | A | T | String Size  | E | Max     |
@@ -300,7 +301,7 @@ Table of max sentence length == 1
 +--------------+-----------------+---+---+--------------+---+---------+
 
 Confusion Matrices & Notes
-==========================
+----------------------------
 
 Lemization
 ----------
@@ -354,7 +355,7 @@ Check 1000 words
                Negative     397            9443
 
 Analysis
-========
+---------
 
 **I believe that the best Brandon checker will look at the length of the
 text, and adjust the % threshold and the exact phase 1 checker per
@@ -413,7 +414,7 @@ Stopwords threshold increases to 28
 This is the ideal optimal phase 1 algorithm for ``brandon`` checker.
 
 Phase 2
-=======
+-------
 
 Phase 2 is the dictionary checker.
 
