@@ -189,4 +189,49 @@ RETURN $<A, N>$
 \item ERROR "List exhausted"
 \end{enumerate}
 \end{algorithm}
+
+\section{The Algorithm Implementation}
+
+\subsection{Assumptions}
+
+\begin{itemize}
+\item We know exactly what is going into the lists. Because the lists will only container crackers and decryptors
+\item We know exactly how many items will be in the list, because we know what is going into it
+\item the only thing we do not know is the specific ordering of the list based on the weight function
+\item We are implementing this as a regular Python list
+\item Nothing we do not know will be added to the list. I.E. The list is deterministic as a multi-set. It will only contain items we know, and will always be a specific length or an easily calculable length.
+\end{itemize}
+
+\subsection{Data Structure Ideas}
+We can use a Complete Binary Tree. This data structure has O(log n) search and O(log n) pop / deletion. And because it is a \textbf{complete} binary tree, it can be implemented as a regular Python list.
+
+More specifically, we will implement this tree as a Heap. A heap is a data structure that uses a CBT (Complete Binary Tree) as its backend. Most importantly, the first first element [0] will always be the smallest element.
+
+Here are some more facts about heaps:
+\begin{itemize}
+	\item The first element will always be the smallest
+	\item The value of a node is always smaller than its children
+	\item For every node, its first child is at $2*k + 1$, its second child is at $2*k + 2$, and its parent is at $floor((k + 1) / 2)$.
+	\item If H is a heap, then the following will never be false $
+h[k] <= h[2*k + 1] and h[k] <= h[2*k + 2]$. 
+\item HeapReplace is equivalent to heapPop and heapPush. 
+\item HeapPushPop is equivalent to heapPush followed by heapPop
+\item The Python heap module implements merge() which is used for merging sorted sequences into the heap.
+\end{itemize}
+
+\subsection{Ideas}
+Each decryptor / cracker will return their values as heaps.
+
+Since we have a families "encoding, basicEncryption, hashes" we perform Merge on these values.
+Since our assumption is that we know \textbf{exactly}, what each function is returning, and they are deterministic we can simply do insertion sort --- but without the O(n) check to see if it is sorted. We do this check on non-deterministic inputs. But since we know the exact contents of the return, we do not need to perform this check. We simply insert.
+
+When we merge, we also know the exact contents of the input to the merge. This means that again, we do not need to stress too much about how to effectively merge 2 things if we already know what the functions are. All we have to do is make sure we maintain the heap property.
+
+At the end, we will have a merged list which follows the heap property.
+
+So the idea is that instead of taking the time to turn the list into a heap everytime, we simply build the heap as we take the inputs from each node. And since we already know what the heap looked like before, and we know everything apart from the minimise value, we can use some clever CompSci to minimise the amount of time needed to Heapify the list.
+
+Once we have a heap, naturally the first element will always be the lowest. 
+
+But this is assuming we need to evaluate the entire list every time. 
 \end{document}
