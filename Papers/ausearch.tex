@@ -12,6 +12,13 @@
 \usepackage{enumitem}
 \graphicspath{{.}}
 
+% Credit: https://tex.stackexchange.com/a/95841/
+\usepackage{tabularx}
+\newenvironment{conditions*}
+  {\par\vspace{\abovedisplayskip}\noindent
+   \tabularx{\columnwidth}{>{$}l<{$} @{${}={}$} >{\raggedright\arraybackslash}X}}
+  {\endtabularx\par\vspace{\belowdisplayskip}}
+
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \theoremstyle{definition}
@@ -45,7 +52,7 @@ found in reasonable time $\ell_t$.
 
 To aid us in our quest, we have the following oracles for any node $A$:
 \begin{itemize}
-\item A metric that tells us either (for type I) the rough likelihood of there being any children ($p_A$), or (for type II) the rough likelihood of this being the final node ($P_A$); 
+\item A metric ($p_A$) that tells us either (for type I) the rough likelihood of there being any children, or (for type II) the rough likelihood of this being the final node (with $P_A$, the likelihood of this being the correct node given that we cracked it, being $1$); 
       the probability of a successful crack
 \item The average running time of finding the children if there are some ($t_A$);
       the average runtime of a successful crack
@@ -53,107 +60,67 @@ To aid us in our quest, we have the following oracles for any node $A$:
       the average running time of an unsuccessful crack
 \end{itemize}
 
-If we let $\omega_A$ be the time taken to run if $A$ is on the fastest route,
-$\Omega_A$ be the time taken if it isn't, and $\tau_A$ be the time taken to examine the rest of the tree.
-We can arrive at a rather simplistic optimal weight system right away:
+An optimal heuristic (if we could compute it instantly), would be:
 \[
-	W(A) = p_A \cdot (t_A + (1-P_A) (\omega_A + \tau_A)) + (1 - p_A) \cdot (T_A + \tau_A)
+	W(A) = p_A (t_A + c_A + (1-P_A) (\omega_A + (1-k_A) \tau_A)) + (1 - p_A) (T_A + \tau_A)
 \]
+where
+\begin{conditions*}
+	c_A & the time taken to check $A$ \\
+	\omega_A & the time taken to run if $A$ is on the fastest route \\
+	\tau_A & the time taken to evaluate the tree barring $A$ and its children \\
+	k_A & the likelihood that $A$ is on the correct path \\
+\end{conditions*}
 
 Needless to say, $\tau_A$ is uncomputable without evaluating every node, as a
-trivial result of the undecidability of the Halting Problem. $\omega_A$ and $\Omega_A$ have similar issues.
+trivial result of the undecidability of the Halting Problem. $\omega_A$ and $k_A$
+don't look particularly promising either.
 
-In this paper, we set about trying to find a replacement heuristic for $\tau_A$, as well as trying to approximate $\omega_A$ and $\Omega_A$.
-
-We will use $\xi$ to represent the root node.
+In this paper, we set about trying to find a replacement heuristic for $\tau_A$, and for
+methods of approximating $\omega_A$ and $k_A$.
 
 \section{Modelling}
-%We will assume that all ciphers that are successfully cracked either yield the plaintext 
-%directly, or are the ancestor of the plaintext. Even though this is not \emph{always}
-%the case, we will be able to navigate out of such situations (at a time penalty).
-
 We assume that there is no overhead in getting these stats. This is again untrue,
 but if we require that any non-trivial work is done in the actual gathering of 
-children, at the expense of weakening the heuristic.
+children, at the expense of increasing the uncertainty in the heuristic.
 
-We assume that type I nodes will have a probability of being the solution $P$ high
-enough that we can treat it as 1 in the weight calculation. However, this is tweakable within the algorithm, so I will just leave $P$ as-is.
+We also assume that there are no two nodes with the same child (i.e. this is a tree). This is achieved in Ciphey by filtering out reoccurring values.
 
-We also assume that there are no identical nodes. This is achieved in Ciphey by
-filtering out reoccurring values, which causes reality to move away from the
-heuristic a small bit.
+We can assume that a successful crack means that we are on the right path ($k_A = 1$),
+this allows us to unify type I and type II nodes. For most ciphers, the chance of this
+assumption failing is astronomically small.
 
-We can assume that a successful crack means that we are on the right path.
+This last assumption allows us to simplify the weight calculation:
+\begin{align*}
+W(A) &\approx p_A (t_A + c_A + (1-P_A) (\omega_A + (1-1) \tau_A)) + (1 - p_A) (T_A + \tau_A) \\
+     &= p_A (t_A + c_A + (1-P_A) \omega_A) + (1 - p_A) (T_A + \tau_A)
+\end{align*}
 
-%\section{Method}
-%Early solutions did not keep track of what was below them, leading to a sunk cost
-%fallacy, where the program would just recurse down the most efficient path at each 
-%point.
-%
-%When discussing the problem with Brandon Skerritt, he briefly suggested Alpha-Beta 
-%pruning and minimax style solutions to the problem. Thinking on this theme, I came upon
-%this chess engine-like solution.
-%
-%Let's first examine a basic non-pruning chess engine. It has a tree of nodes, each node representing a
-%position on the board. We can either heuristically evaluate it (how many pieces do we have,
-%are they in strong positions), or we can look at the child nodes, evaluate them, and use the
-%information to calculate a more informed evaluation of the position.
-%
-%This replacement of a single heuristic with a refined combination of heuristics only works because
-%a position is only as good as where it gets you: an ideal engine would look at all the possible
-%future positions that could arise, and work off that.
-%
-%Luckily for us, our problem can be thought of in a not dissimilar way.
-%
-%RANTS
-%
-%Each node $A$, when evaluated in some order $N$, either contains or does not contain
-%the solution.
-%
-%We can evaluate the expected run time of a child as the expected run time of the root.
-%
-%We use the simplification that $\tau_\xi = \Omega_\xi$
-%
-%For type II nodes, $\omega_A = \Omega_A = 0$, and $p_A = P_A$, so $W(A) = (1-P_A)(T_A + \tau_A)$, a massive simplification!
-%
-%This isn't a tree, its a list of possible results!
-%
-%We do not care about the runtime if it is not a member of $L$
-%
-%We don't care about infinite recursion, as the heuristic now perfectly aims for
-%what we want!
-%
-%	 Find some list $N$ formed of all of the elements of $L$,
-%	      where each element only occurs once, which minimises 
-%	      $p_{N_0}(t_{N_0} + \omega_{N_0}) + (1-p_{N_0})(p_{N_1}(t_{N_1} + \omega_{N_0}) + (1-p_{N_1})(...))$, which represents the average time taken if the solution is a member of $L$.
-%	 Since, the probability that none of the nodes are the solution 
-%	      $\prod_{i \in L} (1-P_L)$ is usually very small, we can approximate 
-%	      $\omega_\xi$ as that value. 
-%	 $\Omega_\xi$ could be infinite, but using the same assumption, we
-%	      can approimate it as $\sum_{i \in N}(1 - p_i)(T_i + \Omega_i)$
-%	      
-%	      We dont care if type I or type II
-%	      
-%	      Time can be in any linear unit, so it doesn't matter if we measure on one machine
-%
-%	We assume $\forall A: \omega_A = \omega_\lambda \land \Omega_A = \Omega_\lambda $
+Since nested ciphers are rather rare, we can assume they do not contribute a meaningful
+amount to the weight ($P_A \approx 1$):
 
+\begin{align*}
+W(A) &\approx p_A (t_A + c_A + (1-1) \omega_A + (1 - p_A) (T_A + \tau_A) \\
+     &= p_A (t_A + c_A) + (1 - p_A) (T_A + \tau_A)
+\end{align*}
 \section{Proposed Solution}
-Instead of storing the results as the intuitive tree data structure, it makes more
-sense to think about it as a list, as we do not care what the parent of a node is!
+Instead of storing the results as a tree (which is the immediate reaction most would 
+have), it makes more sense to think about it as a list, as we do not care what the
+parent of a node is!
 
 We let Info($A$ : Node) be the function that gives us the information about the 
 node, and Evaluate($A$ : Node) be the function that gives us the result of 
-procesing.
+processing.
 
-We can gather $\omega_\xi$ and $\Omega_\xi$ through sampling for each type 
-of data, and use them as an approximation for any $\omega_A$ and $\Omega_A$ that
-we may encounter of that type.
+I will use $N'$ to mean the tail (the sequence formed by removing the first element) of
+the sequence $N$
 
-\begin{algorithm}[FindBestOrder($S$ : List[Node])]\,\\
+\begin{algorithm}[FindBestOrder($S$ : List(Node)]\,\\
+TODO: Get someone who understands NLP to do this for me
+
 We need to find the node $A$ which has the lowest value of:
 \[
-	W(A) =  p_A \cdot t_A + (1 - p_A) \cdot (T_A + W(N))
+	W(A) =  p_A (t_A + c_A) + (1 - p_A) (T_A + W(N))
 \]
 
 	Where $N$ is some a sequence formed from unique elements of $S \setminus \{A\}$, that minimises $W(A)$:
@@ -161,14 +128,14 @@ We need to find the node $A$ which has the lowest value of:
 	W(N) = 
 	\begin{cases}
 		0 & \text{if}\,|n| = 0 \\
-		p_{N_0} t_{N_0} + (1 - p_{N_0}) (T_{N_0} + W(N')) & \text{otherwise}
+		p_{N_0} (t_{N_0}+ c_{N_0}) + (1 - p_{N_0}) (T_{N_0} + W(N')) & \text{otherwise}
 	\end{cases}
 \]
 
 RETURN $<A, N>$
 \end{algorithm}
 
-\begin{algorithm}[CipheySearch(\textit{CText} : data)]\,\\
+\begin{algorithm}[AuSearch(\textit{CText} : data)]\,\\
 \begin{enumerate}
 \item Let the set $L = \text{Evaluate}(<$Info(\textit{CText})$, [\,]>$
 \item If \textit{CText} was the solution, return it.
@@ -178,7 +145,7 @@ RETURN $<A, N>$
 	\item Expand all encodings to their fullest depth
 	\item If we have been running for more than $\ell_t$, ERROR "Timeout".
 	\item $<A, N> := $ CALL FindBestOrder$(L)$
-	\item Derive $p_N$ from $P_{[\,]} = 0$, $p_N := p_{N_0} + (1-p_{N_0})p_{N'}$
+	\item Derive $p_S = p_A + (1-p_A) p_N$ from $p_{[\,]} = 0$, $p_N := p_{N_0} + (1-p_{N_0})p_{N'}$
 	\item If $p_N := p_{N_0} + (1-p_{N_0})p_{N'}$ is less than $\ell_p$, ERROR "Unlikely".
 	\item Remove $A$ from $L$
 	\item $S := \text{Evaluate}(A)$
