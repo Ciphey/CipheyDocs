@@ -201,4 +201,32 @@ So the idea is that instead of taking the time to turn the list into a heap ever
 Once we have a heap, naturally the first element will always be the lowest. 
 
 But this is assuming we need to evaluate the entire list every time. 
+
+I am thinking that the weight changes will not be significant. I.E. $80$ cannot become $2$. The weight changes will most likely be smaller than that change.
+
+My thinking is this:
+* We have a list of weights, $\omega_A$
+* We perform the crackers / dectyptors, and store the result in $A$
+* We now have list of weights $\omega_B$. Our list now looks like $[\omega_A, \omega_B]$.
+\textbf{Path 1}. Normally we would recalculate every single weight, giving us an exponential growth rate.
+\textbf{Path 2}. Assuming that the weights do not massively change, we only re-calculate the weights we select.
+* For this algorithm, choose part 2. So we store all the new weights, and we hasify the list with both the old weights, and the new weights. If the element at index 0 is an old weight, we re-calculate it. If it is still the lowest, we use it. If not, we go to the 2nd lowest.
+
+So the most expensive part is the maths equation, but finding the minimum is really cheap.
+
+We will also delete trees 
+
+\subsubsection{Issues with the above algorithm}
+* It may be possible for an old weight at #3 to be updated to the new lowest weight, which means the algorithm isn't optimal.
+* If the weights change every time, and they are relient on the previous weight, we will have to expend space complexity to store all weights until we update them.
+
+\subsubsection{Harlan's idea}
+It's a optimisation trick
+Basically, I calculate the time taken in a vacuum for an evaluation
+I. E. The expected time for that node
+Then I sort in ascending order, as the contribution of each one decreases as you go up the list
+However, I'm pretty sure that's not going to give accurate results
+Only non-insane ones
+Usually
+
 \end{document}
