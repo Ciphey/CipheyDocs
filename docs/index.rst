@@ -74,6 +74,7 @@ Read the documentation if you want to learn more about the functions.
    :caption: Contents:
 
         References <reference.rst>
+        Installation Guide <install.rst>
         Language Checker <lc2.rst>
         Neural Network <nn.rst>
         What encryptions are implemented? <ciphers.rst>
