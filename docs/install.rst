@@ -27,7 +27,7 @@ And/or
    python3 -c "import sys; print(sys.version)"
 
 If Python is installed, one of these commands will run and will output
-the version number. Ciphey onlysupports numbers higher than 3.6. If you
+the version number. Ciphey only supports numbers higher than 3.6. If you
 see “2” or anything below “3.6”, we’ll need to install a more up to date
 version.
 
@@ -81,15 +81,18 @@ Run this command:
         Replace ``python3`` with ``python`` if you need to. If you’re not sure,
         read the previous section ``Detailed Explanation``.
 
-This command does many things: \* Uses Python3 (Ciphey only supports
-Python3.6 and above) \* The -m flag tells Python to run the module \* We
-are telling the version of pip inside of Python3 to install something.
+This command does many things: 
+
+* Uses Python3 (Ciphey only supports Python3.6 and above) 
+* The -m flag tells Python to run the module 
+* We are telling the version of pip inside of Python3 to install something.
+
 The reason why we use Python3 to call Pip instead of calling Pip is that
 the version of Pip may differ from Python, or you may have multiple
-versions of Python installed or you may be in a virtual environment. \*
-The -U flag says “upgrade”. Sometimes Python gets stuck on an older
-version of Ciphey, so if it does – it says to upgrade it. \* “ciphey” is
-the name of the package we want to install.
+versions of Python installed or you may be in a virtual environment. 
+
+* The -U flag says “upgrade”. Sometimes Python gets stuck on an older version of Ciphey, so if it does – it says to upgrade it. 
+* “ciphey” is the name of the package we want to install.
 
 Trouble Shooting
 ~~~~~~~~~~~~~~~~
