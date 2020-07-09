@@ -35,6 +35,8 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_autodoc_typehints",
 ]
+
+autodoc_mock_imports = ["ciphey"]
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
