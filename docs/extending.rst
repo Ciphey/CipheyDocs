@@ -4,7 +4,7 @@ Extending Ciphey
 The biggest change in Orwell is the revamped interface. It is now very simple to add your own
 cipher, checker, decoding or even search algorithm!
 
-All of these interfaces (and more) can be found in the ``ciphey/iface.py`` file,
+All of these interfaces (and more) can be found in the ``ciphey/iface`` directory,
 which you should definitely refer to as you go!
 
 Ciphey uses camelCase for abstract method names, so it is more easy to spot them
@@ -41,22 +41,21 @@ The ``Targeted`` interface only has one abstract static method:
 module attacks, so that users can gather all of the modules for a specific
 target.
 
-
-Decoder
+Checker
 -------
-The decoder represents the undoing of some encoding, and is the only module
-capable of translating between data types. It has two abstract methods:
+The checker is a simple interface used to determine whether a given result is
+the sought-after plaintext. There exists a simple ``regex`` checker, and a
+``brandon`` natural language checker, but it is perfectly possible that these
+do not fulfill your needs. It has two abstract methods:
 
-``decode(self, ctext: T) -> Optional[U]`` does pretty much what you expect. It
-attempts to decode some data ``ctext``, returning ``None`` on failure. Be aware
-that most of the data passed to this function will not be of your decoding, so
-it is worth optimising towards recognising false candidates rather than towards
-decoding correctly passed data.
+``check(self, text: T) -> Optional[str]`` should check to see if ``text`` is
+the solution. It should then return a ``str containing information about how it
+worked out it was the solution (or an empty string if this isn't possible),
+or ``None`` if it wasn't the solution.
 
-``priority() -> float`` is an static method that should return a very rough
-estimate of the liklihood that this encoding will turn up.
-``Base64`` and ``Base16`` have this set to ``0.4``,
-whereas ``Morse`` has this set to ``0.05``. Use that as a rough guide.
+``getExpectedRuntime() -> float`` should be used to give a rough idea about how
+many seconds this should take to run. If you don't know, a value of ``1`` is
+absolutely fine.
 
 Cracker
 -------
@@ -75,6 +74,22 @@ cracking. It should return an empty list on failure, or a list of potential
 ciphertexts (please not too many!), with keys and other information if it is
 appropriate. The CrackResult class is also located in ``iface.py``, and is
 pretty self-explanatory.
+
+Decoder
+-------
+The decoder represents the undoing of some encoding, and is the only module
+capable of translating between data types. It has two abstract methods:
+
+``decode(self, ctext: T) -> Optional[U]`` does pretty much what you expect. It
+attempts to decode some data ``ctext``, returning ``None`` on failure. Be aware
+that most of the data passed to this function will not be of your decoding, so
+it is worth optimising towards recognising false candidates rather than towards
+decoding correctly passed data.
+
+``priority() -> float`` is an static method that should return a very rough
+estimate of the liklihood that this encoding will turn up.
+``Base64`` and ``Base16`` have this set to ``0.4``,
+whereas ``Morse`` has this set to ``0.05``. Use that as a rough guide.
 
 ResourceLoader
 --------------
@@ -98,11 +113,12 @@ Searcher
 This is the heart of Ciphey, and is what sets it above similar tools. It must
 intelligently work out how to crack the ciphertext using the modules found
 in the registry. It took us more than a month to come to ``AuSearch``, which
-is the default ``Searcher``, and it still isn't perfect ;).
+is the default ``Searcher``, and it still isn't perfect ;). In fact, we are
+planning on replacing it with an A* search when we can work out how.
 
 As such, implementing one of these is a significant undertaking, and a
 successful implementation is definitely worth a pull request!
 
 For such a complex module, it has a very simple interface: a single abstract
 method ``search(self, ctext: Any) -> SearchResult``, which should accept the
-ciphertext, and output the plaintext, with some information on how it got there
+ciphertext, and output the plaintext, with some information on how it got there.
