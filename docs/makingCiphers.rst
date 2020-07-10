@@ -110,7 +110,7 @@ number, such as 0.05.
    @staticmethod
    def priority() -> float:
        """How often is this seen in a CTF out of 1
-       Returns float
+       Returns float``
        """
        return 0.05
 
@@ -179,115 +179,119 @@ The final function is ``getTarget()``.
 Crackers
 --------
 Now we'll walk through how to build a cracker.
-"""
- ██████╗██╗██████╗ ██╗  ██╗███████╗██╗   ██╗
-██╔════╝██║██╔══██╗██║  ██║██╔════╝╚██╗ ██╔╝
-██║     ██║██████╔╝███████║█████╗   ╚████╔╝
-██║     ██║██╔═══╝ ██╔══██║██╔══╝    ╚██╔╝
-╚██████╗██║██║     ██║  ██║███████╗   ██║
-© Brandon Skerritt
-Github: brandonskerritt
-"""
-from distutils import util
-from typing import Optional, Dict, Union, Set, List
 
-from loguru import logger
-import ciphey
-import cipheycore
+We prefer to use CipheyCore for ciphers. This is because the C++ core is much, much faster than any Python implementations. The location for ciphers in CipheyCore is ``CipheyCore/src/ciphers/``. 
 
-from ciphey.iface import ParamSpec, CrackResult, T, CrackInfo, registry
+All you have to do is write efficient C++ code. Much harder than it sounds! Maybe sure your potential keyspace can't become crazy big. 
 
-@registry.register
-class Caesar(ciphey.iface.Cracker[str]):
-    def getInfo(self, ctext: T) -> CrackInfo:
-        analysis = self.cache.get_or_update(
-            ctext,
-            "cipheycore::simple_analysis",
-            lambda: cipheycore.analyse_string(ctext),
-        )
+Use a library such as SWIG to connect the C++ code to Python. 
 
-        return CrackInfo(
-            success_likelihood=cipheycore.caesar_detect(analysis, self.expected),
-            # TODO: actually calculate runtimes
-            success_runtime=1e-4,
-            failure_runtime=1e-4,
-        )
+Here's an example of the Python class that connects the C++ to the Cracker interface. It's rather similar to the Decoder interface, so there isn't as much information provided.
 
-    @staticmethod
-    def getTarget() -> str:
-        return "caesar"
+If you need help with this, create a GitHub issue or contact us on Discord at discord.ciphey.online.
 
-    def attemptCrack(self, ctext: str) -> List[CrackResult]:
-        logger.debug("Trying caesar cipher")
-        # Convert it to lower case
-        #
-        # TODO: handle different alphabets
-        if self.lower:
-            message = ctext.lower()
-        else:
-            message = ctext
+.. code:: python
+        from distutils import util
+        from typing import Optional, Dict, Union, Set, List
 
-        logger.trace("Beginning cipheycore simple analysis")
+        from loguru import logger
+        import ciphey
+        import cipheycore
 
-        # Hand it off to the core
-        analysis = self.cache.get_or_update(
-            ctext,
-            "cipheycore::simple_analysis",
-            lambda: cipheycore.analyse_string(message),
-        )
-        logger.trace("Beginning cipheycore::caesar")
-        possible_keys = cipheycore.caesar_crack(
-            analysis, self.expected, self.group, True, self.p_value
-        )
-        n_candidates = len(possible_keys)
-        logger.debug(f"Caesar returned {n_candidates} candidates")
+        from ciphey.iface import ParamSpec, CrackResult, T, CrackInfo, registry
 
-        candidates = []
+        @registry.register
+        class Caesar(ciphey.iface.Cracker[str]):
+            def getInfo(self, ctext: T) -> CrackInfo:
+                # Information which can help crack the cipher
+                analysis = self.cache.get_or_update(
+                    ctext,
+                    "cipheycore::simple_analysis",
+                    lambda: cipheycore.analyse_string(ctext),
+                )
 
-        for candidate in possible_keys:
-            translated = cipheycore.caesar_decrypt(message, candidate.key, self.group)
-            candidates.append(CrackResult(value=translated, key_info=candidate.key))
+                return CrackInfo(
+                    success_likelihood=cipheycore.caesar_detect(analysis, self.expected),
+                    # TODO: actually calculate runtimes
+                    success_runtime=1e-4,
+                    failure_runtime=1e-4,
+                )
 
-        return candidates
+            @staticmethod
+            def getTarget() -> str:
+                return "caesar"
+
+            def attemptCrack(self, ctext: str) -> List[CrackResult]:
+                logger.debug("Trying caesar cipher")
+                # Convert it to lower case
+                #
+                # TODO: handle different alphabets
+                if self.lower:
+                    message = ctext.lower()
+                else:
+                    message = ctext
+
+                logger.trace("Beginning cipheycore simple analysis")
+
+                # Hand it off to the core
+                analysis = self.cache.get_or_update(
+                    ctext,
+                    "cipheycore::simple_analysis",
+                    lambda: cipheycore.analyse_string(message),
+                )
+                logger.trace("Beginning cipheycore::caesar")
+                possible_keys = cipheycore.caesar_crack(
+                    analysis, self.expected, self.group, True, self.p_value
+                )
+                n_candidates = len(possible_keys)
+                logger.debug(f"Caesar returned {n_candidates} candidates")
+
+                candidates = []
+
+                for candidate in possible_keys:
+                    translated = cipheycore.caesar_decrypt(message, candidate.key, self.group)
+                    candidates.append(CrackResult(value=translated, key_info=candidate.key))
+
+                return candidates
 
 
 
-    @staticmethod
-    def getParams() -> Optional[Dict[str, ParamSpec]]:
-        return {
-            "expected": ciphey.iface.ParamSpec(
-                desc="The expected distribution of the plaintext",
-                req=False,
-                config_ref=["default_dist"],
-            ),
-            "group": ciphey.iface.ParamSpec(
-                desc="An ordered sequence of chars that make up the caesar cipher alphabet",
-                req=False,
-                default="abcdefghijklmnopqrstuvwxyz",
-            ),
-            "lower": ciphey.iface.ParamSpec(
-                desc="Whether or not the ciphertext should be converted to lowercase first",
-                req=False,
-                default=True,
-            ),
-            "p_value": ciphey.iface.ParamSpec(
-                desc="The p-value to use for standard frequency analysis",
-                req=False,
-                default=0.1,
-            )
-            # TODO: add "filter" param
-        }
+            @staticmethod
+            def getParams() -> Optional[Dict[str, ParamSpec]]:
+                return {
+                    "expected": ciphey.iface.ParamSpec(
+                        desc="The expected distribution of the plaintext",
+                        req=False,
+                        config_ref=["default_dist"],
+                    ),
+                    "group": ciphey.iface.ParamSpec(
+                        desc="An ordered sequence of chars that make up the caesar cipher alphabet",
+                        req=False,
+                        default="abcdefghijklmnopqrstuvwxyz",
+                    ),
+                    "lower": ciphey.iface.ParamSpec(
+                        desc="Whether or not the ciphertext should be converted to lowercase first",
+                        req=False,
+                        default=True,
+                    ),
+                    "p_value": ciphey.iface.ParamSpec(
+                        desc="The p-value to use for standard frequency analysis",
+                        req=False,
+                        default=0.1,
+                    )
+                    # TODO: add "filter" param
+                }
 
-    @staticmethod
-    def scoreUtility() -> float:
-        return 1.5
+            @staticmethod
+            def scoreUtility() -> float:
+                return 1.5
 
-    def __init__(self, config: ciphey.iface.Config):
-        super().__init__(config)
-        self.lower: Union[str, bool] = self._params()["lower"]
-        if type(self.lower) != bool:
-            self.lower = util.strtobool(self.lower)
-        self.group = list(self._params()["group"])
-        self.expected = config.get_resource(self._params()["expected"])
-        self.cache = config.cache
-        self.p_value = self._params()["p_value"]
+            def __init__(self, config: ciphey.iface.Config):
+                super().__init__(config)
+                self.lower: Union[str, bool] = self._params()["lower"]
+                if type(self.lower) != bool:
+                    self.lower = util.strtobool(self.lower)
+                self.group = list(self._params()["group"])
+                self.expected = config.get_resource(self._params()["expected"])
+                self.cache = config.cache
+                self.p_value = self._params()["p_value"]
