@@ -159,3 +159,6 @@ class FirstLetter(Decoder):
 		"""
 		return "firtLetter"
 ```
+
+## Adding a cipher
+
