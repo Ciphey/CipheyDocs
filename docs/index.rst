@@ -72,11 +72,9 @@ Read the documentation if you want to learn more about the functions.
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-
-        References <reference.rst>
         Installation Guide <install.rst>
-        Language Checker <lc2.rst>
-        Neural Network <nn.rst>
+        Extending Ciphey <extending.rst>
+        References <reference.rst>
         What encryptions are implemented? <ciphers.rst>
         Configuration File <config.rst>
         Features <features.rst>

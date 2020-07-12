@@ -196,9 +196,8 @@ Use a library such as SWIG to connect the C++ code to Python.
 
 Here's an example of the Python class that connects the C++ to the Cracker interface. It's rather similar to the Decoder interface, so there isn't as much information provided.
 
-If you need help with this, create a GitHub issue or contact us on Discord at discord.ciphey.online.
-
 .. code:: python
+
         from distutils import util
         from typing import Optional, Dict, Union, Set, List
 
@@ -303,3 +302,5 @@ If you need help with this, create a GitHub issue or contact us on Discord at di
                 self.expected = config.get_resource(self._params()["expected"])
                 self.cache = config.cache
                 self.p_value = self._params()["p_value"]
+                
+If you need help with this, create a GitHub issue or contact us on Discord at discord.ciphey.online.
