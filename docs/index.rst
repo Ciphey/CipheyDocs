@@ -79,6 +79,8 @@ Read the documentation if you want to learn more about the functions.
         Configuration File <config.rst>
         Features <features.rst>
         How does it work? <howWork.rst>
+        Settings File <settings.rst>
+        Adding your own ciphers <makingCiphers.rst>
 
 Indices and tables
 ==================
