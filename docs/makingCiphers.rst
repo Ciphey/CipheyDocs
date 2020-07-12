@@ -1,6 +1,11 @@
 How to add a cipher
 ===================
 
+TODO:
+- [ ] convert to Octal template
+- [ ] Mention __init__.py
+- [ ] Mention [str, bytes]
+
 Ciphey relies on ciphers, and as much we have made it as easy as
 possible for you to add a cipher to Ciphey.
 
@@ -73,6 +78,9 @@ Let’s rename it to firstLetter:
 ::
 
    class FirstLetter(Decoder):
+
+
+
 
 Now, to write the decode function. This is the part that you created and
 work on! I would suggest building it locally, in a seperate file and
