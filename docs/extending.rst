@@ -51,6 +51,10 @@ case, you should use ``@ciphey.iface.registry.register_multi``:
 Note how the type parameters are not given to the interface name; these are filled in
 by the decorator
 
+If you are generating your own classes, or somehow the decorators do not cover what
+you need, you can manually call the decorators as functions. See
+``ciphey/basemods/Decoders/bases.py`` for an example of this.
+
 Base classes
 ------------
 These provide various attributes of the module you wish to add:
