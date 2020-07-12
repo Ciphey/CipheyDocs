@@ -78,7 +78,9 @@ pretty self-explanatory.
 Decoder
 -------
 The decoder represents the undoing of some encoding, and is the only module
-capable of translating between data types. It has two abstract methods:
+capable of translating between data types. As such, it has two type parameters.
+The first (``T``) is the source type, and the last (``U``) is the destination
+type. It has two abstract methods:
 
 ``decode(self, ctext: T) -> Optional[U]`` does pretty much what you expect. It
 attempts to decode some data ``ctext``, returning ``None`` on failure. Be aware
