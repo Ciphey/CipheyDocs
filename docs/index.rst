@@ -26,48 +26,52 @@ To use as a console application:
 
         The encrypted text you want to decrypt.
 
-.. option:: -g, --greppable
+.. option:: - "text"
+        Ciphey can be ran with Ciphey [OPTIONS] - "text" too
+
+.. option:: -- file.txt
+        Open a file in Ciphey. Ciphey [OPTIONS] -- file.txt
+
+.. option:: -q, --quiet
 
         Don't print out extra information such as the probability table. Useful for grepping the answer.
 
-.. option:: -c, --cipher
+.. option:: -i, --info
 
         Use this option to get mroe information on the cipher used.
 
-.. option:: -d, --debug
+.. option:: -v, --verbose
 
         Turn on debug mode, which prints out the logs of the file.
+        -v is debug mode.
+        -vvv is trace mode.
 
-Alternatively, Ciphey can also be used with these methods:
+.. option:: -w, --wordlist
+        Use the given wordlist.
 
-.. code-block:: console
+.. option:: -p, --param
+        Pass a paramater to the language checker
 
-        $ ciphey "encrypted text here"
+.. option:: -l, --list-params
+        List the params of the given module
 
-.. code-block:: console
+.. option:: -c, --config
+        Use the given config file.
 
-        $ echo 'encrypted text' | ciphey
+.. option:: -C, --checker
+        Use the given checker (such as regex)
 
 
-It is also possible to import ciphey:
-
-.. code-block:: console
-
-        >> from ciphey.__main__ import Ciphey
-
-Importing Ciphey's __main__ function allows us to create a Ciphey Object:
-
-.. code-block:: console
-
-        >> cipheyObj = Ciphey(text = "encrypted text")
-
-Once we've done this, the function we normally want is decrypt()
+Regex
+------
+To run Ciphey with Regex support, execute this:
 
 .. code-block:: console
+        ciphey -t = "text" -C regex -p regex.regex={
 
-        >> cipheyObj.decrypt()
+This says "-C regex" use the given checker Regex, "-p regex.regex={" pass the paraemter "regex.regex" with the value "{" to the regex checker. The value "{" is the regex we want to check against. Many CTF flags use {}.
 
-Read the documentation if you want to learn more about the functions.
+Alternatively, if you have a large list of regex, check out the settings file which can store a regex list and be automatically used.
 
 .. toctree::
    :maxdepth: 2

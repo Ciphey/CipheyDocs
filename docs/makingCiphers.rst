@@ -22,6 +22,9 @@ talk more about this later.
 
 We’ll walk through adding a decoder first.
 
+.. note::
+        If you have created a Ciphey module, but do not wish to upload it to GitHub or mess around with manually installing it into the Ciphey source code, you can tell ciphey to use it by "ciphey -m module.py"
+
 Adding a decoder
 ----------------
 
