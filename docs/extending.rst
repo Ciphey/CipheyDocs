@@ -10,11 +10,50 @@ which you should definitely refer to as you go!
 Ciphey uses camelCase for abstract method names, so it is more easy to spot them
 in your (and our!) code.
 
-When you have implemented your module, add it to the registry for use with
-Ciphey with ``ciphey.iface.registry.register(YourClass, ModuleBaseClass)``
 
 .. contents::
 
+
+Registering your module
+-----------------------
+
+Ciphey has a singleton Registry object that keeps track of all of the modules.
+After getting your code imported with ``-m`` (or by integrating it into the source),
+your class must use one of the following decorators:
+
+``@ciphey.iface.registry.register`` examines the decorated class to determine what
+interface it uses, and then registers it:
+
+.. code:: python
+
+  from ciphey.iface import registry, Cracker
+
+  @registry.register
+  class DesBruteForce(Cracker[bytes]):
+      pass
+
+This covers pretty much every use case, but there may exist a case where the class
+can accept multiple different types, such as for some ``ResourceLoaders``. In this
+case, you should use ``@ciphey.iface.registry.register_multi``:
+
+.. code:: python
+
+  from ciphey.iface import registry, Decoder
+
+  @registry.register_multi((str, str), (bytes, bytes))
+  class Reverse(Decoder):
+      pass
+
+  @registry.register_multi(str, bytes)
+  class EveryNthSymbol(Cracker):
+      pass
+
+Note how the type parameters are not given to the interface name; these are filled in
+by the decorator
+
+If you are generating your own classes, or somehow the decorators do not cover what
+you need, you can manually call the decorators as functions. See
+``ciphey/basemods/Decoders/bases.py`` for an example of this.
 
 Base classes
 ------------
