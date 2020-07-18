@@ -31,9 +31,9 @@ release = "4.1.0"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "sphinx.ext.autodoc",
-    "sphinx.ext.napoleon",
-    "sphinx_autodoc_typehints",
+    # "sphinx.ext.autodoc",
+    # "sphinx.ext.napoleon",
+    # "sphinx_autodoc_typehints",
 ]
 
 autodoc_mock_imports = ["ciphey"]

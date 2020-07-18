@@ -73,12 +73,14 @@ This says "-C regex" use the given checker Regex, "-p regex.regex={" pass the pa
 
 Alternatively, if you have a large list of regex, check out the settings file which can store a regex list and be automatically used.
 
+Table of Contents
+------------------
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
         Installation Guide <install.rst>
         Extending Ciphey <extending.rst>
-        References <reference.rst>
         What encryptions are implemented? <ciphers.rst>
         Configuration File <config.rst>
         Features <features.rst>
