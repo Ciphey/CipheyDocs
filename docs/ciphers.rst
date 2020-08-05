@@ -28,6 +28,7 @@ Encodings
 
 Hashes
 -------
+NOTE: Hashes are turned off right now due to some bugs with external services we cannot control.
 * MD5
 * SHA-1
 * SHA-256

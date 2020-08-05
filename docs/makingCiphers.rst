@@ -1,11 +1,6 @@
 How to add a cipher
 ===================
 
-TODO:
-- [ ] convert to Octal template
-- [ ] Mention __init__.py
-- [ ] Mention [str, bytes]
-
 Ciphey relies on ciphers, and as much we have made it as easy as
 possible for you to add a cipher to Ciphey.
 
@@ -25,6 +20,7 @@ We’ll walk through adding a decoder first.
 .. note::
         If you have created a Ciphey module, but do not wish to upload it to GitHub or mess around with manually installing it into the Ciphey source code, you can tell ciphey to use it by "ciphey -m module.py"
 
+
 Adding a decoder
 ----------------
 
@@ -36,7 +32,7 @@ Adding a decoder
 
 
    @registry.register_multi((str, str), (bytes, bytes))
-   class YOURCLASSNAMEHERE(Decoder):
+   class YOURCLASSNAMEHERE(Decoder[T, U]):
        def decode(self, ctext: T) -> Optional[U]:
            """Write the code that decodes here
            ctext -> the input to the function
@@ -74,16 +70,17 @@ Now, the first thing we have to do is rename the class.
 
 ::
 
-   class YOURCLASSNAMEHERE(Decoder):
+   class YOURCLASSNAMEHERE(Decoder[T, U]):
 
 Let’s rename it to firstLetter:
 
 ::
 
-   class FirstLetter(Decoder):
+   class FirstLetter(Decoder[str, str]):
 
 
-
+.. warning::
+        Notice how "Decoder[T, U]" changes into "Decoder[str, str]". This is because it is taking a string, and outputting a string. 
 
 Now, to write the decode function. This is the part that you created and
 work on! I would suggest building it locally, in a seperate file and
@@ -186,6 +183,12 @@ The final function is ``getTarget()``.
            returns string
            """
            return "firtLetter"
+
+.. warning::
+        This is a step often overlooked. In the Decoding folder there is a file called `__init.py`. Edit this file and add your decoder to it. 
+
+.. note::
+        Now run Ciphey to see if it works. We use Poetry to run Ciphey. Poetry creates a virtualenv when you run Ciphey, so you know it'll work for us exactly how it works for you. In the root directory of Ciphey (next to the README.md file) run "poetry run ciphey -t "Your test text here"". If your decoer doesn't work, run "-vvv" to see what's happening & contact us via Discord or a GitHub issue.
 
 Crackers
 --------
