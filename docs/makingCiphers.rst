@@ -78,7 +78,6 @@ Let’s rename it to firstLetter:
 
    class FirstLetter(Decoder[str, str]):
 
-
 .. warning::
         Notice how "Decoder[T, U]" changes into "Decoder[str, str]". This is because it is taking a string, and outputting a string. 
 
@@ -90,7 +89,7 @@ For our purposes, let’s build the first letter function.
 
 .. code:: python
 
-   def decode(self, ctext: T) -> Optional[U]:
+   def decode(self, ctext: str) -> Optional[str]:
        """Write the code that decodes here
        ctext -> the input to the function
        returns string
@@ -150,10 +149,10 @@ The final function is ``getTarget()``.
    from ciphey.iface import ParamSpec, Config, T, U, Decoder, registry
 
 
-   @registry.register_multi((str, str), (bytes, bytes))
-   class FirstLetter(Decoder):
+   @registry.register
+   class FirstLetter(Decoder[str, str]):
        @staticmethod
-       def decode(self, ctext: T) -> Optional[U]:
+       def decode(self, ctext: str) -> Optional[str]:
            """Write the code that decodes here
            ctext -> the input to the function
            returns string
@@ -215,7 +214,7 @@ Here's an example of the Python class that connects the C++ to the Cracker inter
 
         @registry.register
         class Caesar(ciphey.iface.Cracker[str]):
-            def getInfo(self, ctext: T) -> CrackInfo:
+            def getInfo(self, ctext: str) -> CrackInfo:
                 # Information which can help crack the cipher
                 analysis = self.cache.get_or_update(
                     ctext,
@@ -294,10 +293,6 @@ Here's an example of the Python class that connects the C++ to the Cracker inter
                     )
                     # TODO: add "filter" param
                 }
-
-            @staticmethod
-            def scoreUtility() -> float:
-                return 1.5
 
             def __init__(self, config: ciphey.iface.Config):
                 super().__init__(config)
