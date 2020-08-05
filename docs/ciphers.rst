@@ -25,6 +25,7 @@ Encodings
 * Morse Code
 * Morse code with new lines
 * Octal Decoding (Base8)
+* Atbash
 
 Hashes
 -------
