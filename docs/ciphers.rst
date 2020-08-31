@@ -19,6 +19,7 @@ Encodings
 * Base62
 * Base58 Bitcoin
 * Base58 Ripple
+* Base69
 * Ascii
 * Hexadecimal
 * Binary
@@ -26,6 +27,9 @@ Encodings
 * Morse code with new lines
 * Octal Decoding (Base8)
 * Atbash
+* Standard Galatic Decoder (Minecraft enchanting table)
+* X&Y decoder (if a string contains only 2 chars, X and Y, try converting to binary)
+
 
 Hashes
 -------
