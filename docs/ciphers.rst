@@ -8,6 +8,7 @@ Basic Encryptions
 * Pig Latin
 * Reverse Cipher
 * Transposition Cipher
+* Binary Substitution Cipher (XY-Cipher)
 
 Encodings
 ----------
@@ -27,18 +28,17 @@ Encodings
 * Morse code with new lines
 * Octal Decoding (Base8)
 * Atbash
-* Standard Galatic Decoder (Minecraft enchanting table)
 * X&Y decoder (if a string contains only 2 chars, X and Y, try converting to binary)
-
+* Standard Galactic Alphabet (aka Minecraft Enchanting Language)
 
 Hashes
 -------
-NOTE: Hashes are turned off right now due to some bugs with external services we cannot control.
 * MD5
 * SHA-1
 * SHA-256
 * SHA-384
 * SHA-512
+NOTE: Hashes are turned off right now due to some bugs with external services we cannot control.
 
 What Ciphers are going to be implemented next?
 -----------------------------------------------
