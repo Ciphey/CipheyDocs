@@ -13,7 +13,7 @@ Save this as settings.yml in the appdirs location, which can be found by running
         settings.yml should be placed in /home/bee/.config/ciphey
 ```
 
-From this example, we can see that using the argument we need to place the settings file at /home/bee.config/ciphey/settings.yml
+From this example, we can see that using the argument we need to place the settings file at /home/bee/.config/ciphey/settings.yml
 
 The settings file follows a specific format. **Copy and paste this below!**
 ```yaml
